@@ -50,7 +50,6 @@
 
 
 
-
 # Import python packages
 import streamlit as st
 import requests
@@ -103,27 +102,24 @@ ingredient_list = st.multiselect(
 
 if ingredient_list:
 
-    ingredients_string = ""
+    ingredients_string = ''
 
     for fruit_chosen in ingredient_list:
 
-        ingredients_string += fruit_chosen + " "
+        ingredients_string += fruit_chosen + ' '
 
-        st.subheader(fruit_chosen + " Nutrition Information")
+        st.subheader(fruit_chosen + ' Nutrition Information')
 
         search_on = search_lookup[fruit_chosen]
 
         try:
 
             smoothiefroot_response = requests.get(
-                "https://my.smoothiefroot.com/api/fruit/"
-                + search_on.lower()
+                "https://my.smoothiefroot.com/api/fruit/" + search_on
             )
 
-            nutrition_data = smoothiefroot_response.json()
-
             st.dataframe(
-                data=nutrition_data,
+                data=smoothiefroot_response.json(),
                 use_container_width=True
             )
 
@@ -133,12 +129,11 @@ if ingredient_list:
                 f"Error retrieving nutrition information for {fruit_chosen}: {e}"
             )
 
-    # Insert order into Snowflake
     my_insert_stmt = f"""
         INSERT INTO smoothies.public.orders
         (ingredients, name_on_order)
         VALUES
-        ('{ingredients_string.strip()}',
+        ('{ingredients_string}',
          '{name_on_order}')
     """
 
